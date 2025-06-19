@@ -1,0 +1,157 @@
+Configuring Microsoft Defender SmartScreen with Group Policy
+Introduction
+You are working on securing your Windows Servers, and as part of the effort, you want to add protections against phishing and malware from websites, applications, and downloaded files. In this hands-on lab, you are going to create a Group Policy for a domain-joined virtual machine. The policy will enforce enabling SmartScreen on any domain-joined machine.
+
+Solution
+Log in to the Azure portal using the credentials provided on the lab page. Be sure to use an incognito or private browser window to ensure you're using the lab account, rather than your own.
+
+Connect to the dc and vm virtual machines via remote desktop (either through the Remote Desktop client available on Windows machines or through the Microsoft Remote Desktop application available for Mac machines) using the public IP address and credentials provided for each on the lab page.
+
+The lab files needed for configuring the Active Directory Domain Services environment can be accessed via the GitHub repository for this lab.
+
+Configure the Active Directory Domain Services Environment
+Confirm That the Private IP Address of the Domain Controller VM Is Set to Static
+In the Azure portal, from the list of resources, click the dc virtual machine to open the domain controller VM.
+
+In the navigation menu on the left, under Settings, click Networking.
+
+Click the link for the dc-NetworkInterface.
+
+In the menu on the left, under Settings, click IP configurations.
+
+On the IP configurations page for the domain controller, note the IP address in the Private IP address field â it should be 10.0.0.4 â and confirm that it also displays (Static).
+
+Note: If for some reason it is not set to Static, click the configuration and toggle the Assignment field to Static and set the IP address.
+
+Install Active Directory Domain Services on the Domain Controller VM
+In the breadcrumb trail at the top of the screen, click dc to navigate back to the virtual machine.
+
+In the menu on the left, click Overview.
+
+From the menu at the top, click the Connect down-arrow and select RDP.
+
+Connect to the dc virtual machine via remote desktop, using the public IP address and credentials provided on the lab page.
+
+Note: The Server Manager application will open automatically when you connect to the VM. Leave it open, as you will use this later on in the lab. If for some reason it isn't launched, you can do so by clicking the Start menu and selecting Server Manager.
+
+On the dc virtual machine, click the Start menu icon.
+
+From the Start menu, open Windows PowerShell ISE.
+
+Navigate to the GitHub repository for the lab and click the installadds.ps1 file to open it.
+
+Click the Copy raw contents button.
+
+Navigate back to PowerShell and paste the copied script in the top pane.
+
+Note: If the script pane does not display by default, select View from the menu at the top of the PowerShell window and toggle on the Show Script Pane option.
+
+Review the actions provided in the installadds script: installing Active Directory Domain Services, including the management tools; setting the password; and then installing/configuring the AD DS forest with a domain name of corp.awesome.com.
+
+From the menu at the top, click the Run Script button (or press F5).
+
+Once the script has completed, close PowerShell without saving the file.
+
+Navigate back to the Azure portal and, from the menu at the top, click Restart and select Yes.
+
+Create the Domain Admin User on the Domain Controller VM
+Once the dc virtual machine has restarted, connect to it via remote desktop (using the public IP address and credentials provided on the lab page) and launch PowerShell ISE again.
+
+Navigate back to the GitHub repository for the lab and click the domainadmin.ps1 file to open it.
+
+Click the Copy raw contents button.
+
+Navigate back to PowerShell and paste the copied script in the top pane.
+
+Review the actions provided in the domainadmin script: adding a Domain Admin user named awesomeadmin and adding that user to the Domain Admins group.
+
+From the menu at the top, click the Run Script button (or press F5).
+
+Confirm That the DNS for the VM That Will Be Joining the Domain Is Set to the Private IP of the Domain Controller VM
+In the Azure portal, in the breadcrumb trail at the top of the screen, click the lab title link to navigate back to the resource group.
+
+From the list of resources, click the vm virtual machine to open the VM.
+
+In the navigation menu on the left, under Settings, click Networking.
+
+Click the link for the vm-NetworkInterface.
+
+In the menu on the left, under Settings, click DNS servers.
+
+Verify that the Custom option is selected and the DNS server has been set to the private IP address of the domain controller VM, which is 10.0.0.4.
+
+Join the VM to the Domain
+In the breadcrumb trail at the top of the screen, click vm to navigate back to the virtual machine.
+
+In the menu on the left, click Overview.
+
+From the menu at the top, click the Connect down-arrow and select RDP.
+
+Connect to the vm virtual machine via remote desktop, using the public IP address and credentials provided on the lab page.
+
+On the vm virtual machine, click the Start menu icon.
+
+From the Start menu, open Windows PowerShell ISE.
+
+Navigate to the GitHub repository for the lab and click the domainjoin.ps1 file to open it.
+
+Click the Copy raw contents button.
+
+Navigate back to PowerShell and paste the copied script in the top pane.
+
+Review the actions provided in the domainjoin script: adding this computer to the corp.awesome.com domain, using the credentials saved in the $joinCred parameter.
+
+From the menu at the top, click the Run Script button (or press F5).
+
+Once the script has completed, close PowerShell without saving the file.
+
+Navigate back to the Azure portal and, from the menu at the top, click Restart and select Yes.
+
+Once the vm virtual machine has restarted, connect to it via remote desktop (using the public IP address and credentials provided on the lab page).
+
+In Server Manager, from the menu on the left, click Local Server.
+
+In the PROPERTIES section, confirm that the vm virtual machine is joined to the corp.awesome.com domain.
+
+Configure Group Policy for SmartScreen
+On the dc virtual machine, in Server Manager, click Tools at the top-right of the screen and then select Group Policy Management from the menu.
+
+In the Group Policy Management window, in the left navigation menu, expand Forest: corp.awesome.com, and then expand Domains.
+
+Expand and select corp.awesome.com.
+
+From the menu at the top, click Action and then select Create a GPO in this domain, and Link it here....
+
+In the New GPO dialog box, in the Name field, enter smartscreen and click OK.
+
+Once the smartscreen policy appears in the left navigation menu, select it.
+
+In the Group Policy Management Console dialog box, click OK.
+
+From the menu at the top, click Action and then select Edit.
+
+In the Group Policy Management Editor window, in the left navigation menu, under Computer Configuration, expand Policies, Administrative Templates, and Windows Components and then select File Explorer.
+
+In the right pane, select Configure Windows Defender SmartScreen.
+
+In the description that appears for the selected setting, click the Edit policy setting link.
+
+In the dialog box, select Enabled.
+
+Click Apply, and then click OK.
+
+Confirm SmartScreen Policy Has Been Applied
+On the vm virtual machine, in the Search bar in the taskbar, type cmd and select Command Prompt.
+
+In the command line, type gpupdate /force and press Enter.
+
+Once the policy has been updated, from the Start menu, open Windows Security.
+
+In the Windows Security window, in the left navigation menu, select App & browser control.
+
+Under Reputation-based protection, select the Reputation-based protection settings link.
+
+Confirm that the Check apps and files option has been turned On, but is greyed out (i.e. cannot be modified) because the setting is managed by your administrator â in other words, the Group Policy, which was configured to enable Microsoft Defender SmartScreen for any domain-joined virtual machine, was applied successfully to this VM.
+
+Conclusion
+Congratulations â you've completed this hands-on lab!
