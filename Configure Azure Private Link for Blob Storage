@@ -1,0 +1,51 @@
+Configure Azure Private Link for Blob Storage
+In this lab, we will configure an Azure Private Link to ensure that your virtual machine can access the Blob Storage container using a private IP address.
+
+Solution
+Log in to the Azure portal using the credentials provided in the lab.
+
+Configure a Private Endpoint for Blob Storage
+You will begin on the resource group Overview page.
+Under Resources, select the storage account that has been created for this lab.
+From the left-side menu, under Security and Networking, select Networking.
+On the Networking page, select the Private endpoint connections tab.
+Click + Private endpoint to create a new private endpoint.
+On the Basics tab, set the following parameters:
+Subscription: Select the Hands-On Labs subscription
+Resource Group: Select the existing resource group
+Name: pe-1
+Region: West US.
+Click Next : Resource.
+On the Resource tab, set the follow parameters:
+Target sub-resource: blob
+Click on Next : Virtual Network.
+On the Virtual Network tab, set the follow parameters:
+Virtual network: vnet1
+Subnet: subnet1
+Click on Next : DNS.
+On the DNS tab, leave the Private DNS integration settings as default.
+Click on Next : Tags, then Next : Review + create, and then Create. Note the deployment can take some time to complete.
+Verify the Private Endpoint from VM1
+To complete this section, you will need an RDP client to connect to the Windows server.
+
+Test the Private Endpoint
+After the endpoint is created, click Home in the top navigation, and click on the existing storage account (under Recent resources).
+From the left-side menu, under Settings, click Endpoints.
+Copy the Blob Service FQDN, without the https:// or trailing slash / (e.g., azurelalab123.blob.core.windows.net). Keep this value handy to use now and in a later section.
+Open a terminal session.
+Use nslookup followed by the FQDN you copied to see a public IP address.
+Connect to VM1 using RDP
+Go back to the Home page in the Azure portal.
+At the top, select the Virtual Machines tile.
+Select vm1, and select Connect, then RDP. Select Download RDP File to connect directly with the RDP file.
+Note: You may choose to copy the public IP address and connect via RDP manually with your RDP client, instead of using the RDP file. To do this, open up your preferred RDP client, then enter in rdp:// followed by the public IP found in your lab credentials for vm1.
+
+Connect to the virtual machine using the credentials provided for vm1 on the lab page.
+On the RDP session, close the Server Manager page.
+Verify the Private Endpoint from VM1
+Right-click the Start menu, and then choose Run.
+Type cmd into the search bar, and press Enter.
+Here, perform the nslookup test followed by the FQDN you copied earlier. You will see a private IP address that lets you know that your Blob Storage is private.
+Note: You should see a private IP address, such as 10.1.1.5. You may also choose to upload and access a file using other tools such as netstat and Storage Explorer.
+
+Conclusion
