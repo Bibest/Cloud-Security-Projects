@@ -1,0 +1,82 @@
+Ensuring Compliance with Azure Policies
+Introduction
+In this lab, you will assume the role of an Azure security engineer. A common task asked of the Azure security engineer is to ensure compliance of Azure resources. In this hands-on lab, we will assign two Azure policies. Then, we will deploy a non-compliant resource and observe the results of the policy assigned.
+
+Solution
+Log in to the Azure portal using the credentials provided on the lab instructions page. During the lab, make sure you provision resources using the same location as your lab-provided resource group.
+
+Assign Azure Policies
+Create a Policy to Block Deployment of Resource Groups without a Cost Allocation Tag
+From the Azure portal, in the search. bar type and select Policy.
+On the left menu under Authoring, select Assignments.
+Click Assign policy.
+Click on the Scope bubble (will contain the words Px-Real Hands-On Labs) and in the side menu that opens select your resource group.
+Click Select.
+Next to Policy definition, click the ellipsis (...).
+In Search, type Require a tag on and select Require a tag on resource groups.
+Click Add.
+At the top, select the Parameters tab.
+In Tag Name, type Cost Allocation and click Next.
+Select the Non-compliance message tab, and type Resource groups must have a cost allocation tag for financial reporting and chargeback.
+Click Review + create.
+Click Create.
+Create a Policy for Resources to Automatically Inherit the Cost Allocation Tag from the Parent Resource Group
+Click Assign policy.
+Next to Scope, click the ellipsis (...) and select your resource group.
+Click Select.
+Next to Policy definition, click the ellipsis (...).
+In Search, type Inherit a tag from the resource group, and select Inherit a tag from the resource group if missing.
+Click Add.
+Select the Parameters tab.
+In Tag Name, type Cost Allocation and then select the Remediation tab.
+On the Remediation tab, check the box for Create a Managed Identity.
+For Type of Managed Identity, select User assigned managed identity.
+Click the ellipsis next to Scope, and select the current Subscription and your resource group in the panel on the right.
+Click Select.
+Under Existing user assigned identities, select the displayed option.
+Click Review + create.
+Click Create.
+Note: You can ignore any error messages at this point and continue the lab. And note that your policy assignments may not show up in the Azure portal.
+
+Create and Update Resources
+Create a Cost Allocation Tag for the Resource Group
+At the top left, click Home.
+Select Resource groups and click the resource group to open it.
+On the left menu, select Tags.
+Set the following values:
+Name: Cost Allocation
+Value: IT
+Click Apply.
+Create a Virtual Network without a Cost Allocation Tag
+On the left menu, select the Overview option to navigate back to the resource group. Note the Location of your resources.
+Click Create.
+In the search bar, type and select Virtual network.
+Click Create > Virtual network.
+For Name, type PolicyVnet2. For Region, select the same location as your lab's resource group.
+Click Review + create.
+Click Create.
+Observe the Results of Policy Assignment
+Verify Policy Behavior
+Navigate back to the resource group. (A link for easy navigation is displayed under Your deployment is complete.)
+Select PolicyVnet1 to open the virtual network.
+On the left menu, select Tags. Note that PolicyVnet1 does not have a Cost Allocation tag because it was created before the new policy was assigned.
+Navigate back to the resource group.
+Select PolicyVnet2.
+Select Tags. Note that PolicyVnet2 has automatically inherited the Cost Allocation tag from the parent resource group.
+Remediate Existing Resources
+Create a Remediation Task
+From the main navigation, search for and select Policy.
+On the left menu, select Remediation.
+Click the ellipsis next to Scope, and select the resource group.
+Click Select.
+In the filter search bar type and select Inherit a tag from the resource group if missing.
+Ensure the Scope is set to the resource group.
+Note: You should see the two existing resources listed at the bottom of the page. If they are not there, select the option to Re-evaluate resource compliance before remediating. Be aware that this option will take some time to complete, so don't select this option unless no resources are listed.
+
+Click Remediate. Wait a few minutes for the remediation task to complete.
+View the Results
+Once it is complete, at the top, click Home.
+Select PolicyVnet1 from the Resources list.
+On the left menu, select Tags.
+Observe that the remediation task has inherited the Cost Allocation tag from the resource group.
+Conclusion
