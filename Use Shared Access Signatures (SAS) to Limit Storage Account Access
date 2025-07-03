@@ -1,0 +1,139 @@
+Use Shared Access Signatures (SAS) to Limit Storage Account Access
+Introduction
+In this lab, you will have an opportunity to create Shared Access Signatures (SAS) for access to an Azure Storage account and then test the SAS-based access by working with the storage account from a separate environment using Azure Storage Explorer.
+
+Solution
+Create a Blob Container and Upload Blobs
+Connect to the Azure Portal using the Azure portal Account credentials provided. Make sure you're using an InPrivate or incognito window.
+
+Connect to the provided virtual machine using a Remote Desktop clients (see the Additional Resources for some options), and the credentials provided under the lab's VM1 section (under the Azure portal Account credentials section).
+
+Click Storage account's Name link from the list of resources.
+
+From the left menu, select Storage browser.
+
+In the middle pane under the Storage Account, click Blob containers.
+
+Click + Add container.
+
+Provide an all-lowercase Name for the blob container: test
+
+(Any lowercase name would do.)
+
+Click Create.
+
+Click the newly created container, test, to open it.
+
+From the top menu, click Upload.
+
+Click Browse for files.
+
+Select some small sample files to upload from your computer. Choose at least two.
+
+Note: Choose small files that do not contain confidential or personal information.
+
+Click Upload.
+
+Create a Service Shared Access Signature (SAS)
+Under Blob containers, click View all
+
+Click ... (an ellipsis) at the end of the row for the test container.
+
+From the menu, select Generate SAS.
+
+Note: The equivalent Azure CLI command would be az storage blob generate-sas
+
+To generate a Service SAS, ensure the the signing method is set to Account key; it will be by default.
+
+Note: Service Shared Access Signatures (SAS) support optionally applying a Stored Access policy to provide fine-grained control over Shared Access Signatures (SAS).
+
+For the Permissions option, keep Read selected, and also select List.
+
+Note: The default start time and the default expiry time are suitable for your testing environment.
+
+Click Generate SAS token and URL.
+
+Click the Copy to clipboard button at the end of Blob SAS URL field to copy it and store it locally for later use.
+
+Note: Keep a copy of the URL safe, you will need it in the upcoming steps in the lab. The copied URL includes all the details required to connect to the storage account, including the storage account endpoint and the URL-encoded Shared Access Signature (SAS).
+
+Connect and Test the Service Shared Access Signature (SAS)
+In your RDP client, at the Windows Desktop, double-click Microsoft Azure Storage Explorer from the desktop shortcut.
+
+In the left menu Open Connect Dialog. (Its icon looks like a plugin.)
+
+On the Select Resource step, select Blob container or directory to connect using a service Shared Access Signature (SAS).
+
+For the How will you connect to the blob container step, select Shared Access Signature URL (SAS).
+
+Click Next.
+
+For the Blob container or directory SAS URL option, paste the URL you copied earlier.
+
+Note the Display name option, optionally provide a display name, or use the default name generated from the Shared Access Signature (SAS).
+
+Click Next.
+
+Click Connect.
+
+If the folder is not automatically opened for you
+
+in the left menu, expand the navigation down to Emulator & Attached -> Storage Accounts -> (Attached Containers) -> Blob Containers -> test-1 (SAS)
+You should see the items that you uploaded. Select a file, click Delete, click Yes.
+
+This attempt to delete Failed since you don't have the proper permissions. This is based on the permissions you set. The only actions you should be able to complete are to see a list of available blobs and read the blobs.
+
+Note: To update the permissions you would need to generate a new Shared Access Signature (SAS), or combine the Shared Access Signature (SAS) with a Stored Access Policy for fine-grained control that you can change after generating the Shared Access Signature (SAS).
+
+Create an Account Shared Access Signature (SAS)
+Go back to the Azure Portal.
+
+From the left menu, under Security + Networking, select Shared access signature.
+
+Note: The equivalent Azure CLI command is az storage account generate-sas
+
+For the Allowed services, ensure only Blobs is selected; deselect the other options.
+
+For the Allowed resource types, select Service, Container, and Object.
+
+For the Allowed Permissions option, ensure only Read and List are selected.
+
+Note: Note that an account-level Shared Access Signature (SAS) can span multiple services, unlike the previously generated Service Shared Access Signature (SAS) which was applicable to only the Blob service.
+
+Click Generate SAS and connection string.
+
+Click the Copy button at the end of the Blob service SAS URL file to copy the value. Store this locally for later use.
+
+Note: Keep a copy of the connection string safe, you will need it in the upcoming steps in the lab.
+
+Connect and Test the Account Shared Access Signature (SAS)
+Return to the virtual machine.
+
+In Microsoft Azure Storage Explorer, from the left menu click Open Connect Dialog.
+
+On the Select Resource step, select Storage account or service to connect using a service-level Shared Access Signature (SAS).
+
+For the Select connection method step, select Shared access signature URL (SAS).
+
+Click Next.
+
+For the Service URL field, paste the connection string you copied a bit earlier.
+
+Note the Display name option, optionally provide a display name, or use the default name generated from the Shared Access Signature (SAS).
+
+Click Next.
+
+Click Connect.
+
+If the folder is not automatically opened for you
+
+in the left menu, expand the navigation down to Emulator and Attached -> Storage Accounts -> <<name-of-account>> (SAS), where <<name-of-account>> is your lab instance's Store account name.
+On the left, expand the lowest-down Blob containers .
+
+Note: Only blob containers are listed as additional services are not permitted by the Shared Access Signature (SAS).
+
+Click the (lowest-down) test.
+
+You should see the items that you uploaded. Select a file, click Delete, click Yes.
+
+Observe in the Activities section at the bottom that the delete action Failed. This is based on the permissions you set. The only actions you should be able to complete are to see a list of available blobs and read the blobs.
